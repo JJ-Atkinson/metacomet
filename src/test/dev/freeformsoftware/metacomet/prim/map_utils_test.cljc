@@ -1,6 +1,6 @@
-(ns dev.freeformsoftware.metacomet.map-utils-test
+(ns dev.freeformsoftware.metacomet.prim.map-utils-test
   (:require [clojure.test :refer :all]
-            [dev.freeformsoftware.metacomet.map-utils :as mc.mu]))
+            [dev.freeformsoftware.metacomet.prim.map-utils :as mc.mu]))
 
 
 (deftest test-update-nn

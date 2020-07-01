@@ -1,4 +1,4 @@
-(ns dev.freeformsoftware.metacomet.map-utils
+(ns dev.freeformsoftware.metacomet.prim.map-utils
   (:require [com.fulcrologic.guardrails.core :refer [>defn =>]]
             [clojure.spec.alpha :as s]))
 
