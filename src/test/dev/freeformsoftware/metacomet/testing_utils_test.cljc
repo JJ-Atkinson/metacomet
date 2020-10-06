@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [dev.freeformsoftware.metacomet.testing-utils :as dut :refer :all]))
 
-(deftest counting
+(deftest counting-test
   (testing "Does it count correctly?"
     (let [[count f] (dut/counting)]
       (f) (f)
