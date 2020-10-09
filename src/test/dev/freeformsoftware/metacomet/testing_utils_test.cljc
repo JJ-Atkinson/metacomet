@@ -22,3 +22,42 @@
     (is (not (like? {:a 1} {:a 2}))))
   (testing "Missing keys work correctly"
     (is (not (like? {} {:a nil})))))
+
+
+(deftest absolute-distance-test
+  (testing "abs mode"
+    (is ((absolute-distance 2)
+         1 2.999))
+    (is (not ((absolute-distance 2)
+              1 3.1)))
+    (is ((absolute-distance 2)
+         2.99 1)))
+  (testing "ceil mode"
+    (let [f (absolute-distance 1 {:mode :ceil})]
+      (is (f 1 1))
+      (is (f 1 0.1))
+      (is (not (f 1 1.99)))))
+  (testing "floor mode"
+    (let [f (absolute-distance 1 {:mode :floor})]
+      (is (f 1 1))
+      (is (not (f 1 0.1)))
+      (is (f 1 1.99)))))
+
+
+(deftest magnitude-diff-test
+  (testing "abs mode"
+    (let [fix1 (magnitude-distance 0 1)
+          fix2 (magnitude-distance 1 1)]
+      (is (fix1 1 2))
+      (is (not (fix1 1 2.2)))
+      (is (fix2 1 0.9))
+      (is (fix2 1 1.09))
+      (is (not (fix2 1 0.89)))
+      (is (not (fix2 1 1.1)))))
+  (testing "floor mode"
+    (let [fix2 (magnitude-distance 1 1 {:mode :floor})]
+      (is (not (fix2 1 0.9)))))
+  (testing "ceil mode"
+    (let [fix2 (magnitude-distance 1 1 {:mode :ceil})]
+      (is (not (fix2 1 1.09))))))
+

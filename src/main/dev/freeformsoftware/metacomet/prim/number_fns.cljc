@@ -25,3 +25,9 @@
   #?(:cljs ([n ds] (if (or (nan? ds)
                          (not (boolean n))) n (js/parseFloat (.toFixed n ds))))
      :clj  ([n ds] (with-precision ds n))))
+
+(defn abs 
+  "Easy cross platform abs"
+  [n]
+  #?(:clj (Math/abs n)
+     :cljs (Math/abs n)))
