@@ -29,5 +29,4 @@
 (defn abs 
   "Easy cross platform abs"
   [n]
-  #?(:clj (Math/abs n)
-     :cljs (Math/abs n)))
+  (when (neg? n) (- n) n))
