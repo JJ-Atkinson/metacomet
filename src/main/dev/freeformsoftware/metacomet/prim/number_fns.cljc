@@ -29,4 +29,4 @@
 (defn abs 
   "Easy cross platform abs"
   [n]
-  (when (neg? n) (- n) n))
+  (if (neg? n) (- n) n))
