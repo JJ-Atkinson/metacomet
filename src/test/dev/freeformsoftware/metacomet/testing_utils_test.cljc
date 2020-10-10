@@ -56,6 +56,8 @@
       (is (not (fix2 1 0.89)))
       (is (not (fix2 1 1.1)))
       (is (fix3 1000 1000.29))
+      (is (fix3 1000 1000))
+      (is (fix3 (* -525 1000 100) (* -525 1000 100)))
       (is (not (fix3 1000 1000.31)))))
   (testing "floor mode"
     (let [fix2 (magnitude-distance 1 1 {:mode :floor})]

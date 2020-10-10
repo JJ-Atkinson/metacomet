@@ -57,7 +57,7 @@
    [number? number? :distance-check/opts =>
     [number? number? => boolean?]]
    (fn [a b]
-     (let [original-magnitude (Math/log10 a)
+     (let [original-magnitude (Math/log10 (nf/abs a))
            diff-magnitude (- original-magnitude magnitude)
            dist-mult (* dist (Math/pow 10 diff-magnitude))
            diff (- a b)
