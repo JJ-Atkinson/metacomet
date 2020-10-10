@@ -47,13 +47,17 @@
 (deftest magnitude-diff-test
   (testing "abs mode"
     (let [fix1 (magnitude-distance 0 1)
-          fix2 (magnitude-distance 1 1)]
+          fix2 (magnitude-distance 1 1)
+          fix3 (magnitude-distance 2 3)]
       (is (fix1 1 2))
       (is (not (fix1 1 2.2)))
       (is (fix2 1 0.9))
       (is (fix2 1 1.09))
       (is (not (fix2 1 0.89)))
-      (is (not (fix2 1 1.1)))))
+      (is (not (fix2 1 1.1)))
+      (is (fix3 1000 1000.29))
+      (is (not (fix3 1000 1000.31)))
+      ))
   (testing "floor mode"
     (let [fix2 (magnitude-distance 1 1 {:mode :floor})]
       (is (not (fix2 1 0.9)))))
