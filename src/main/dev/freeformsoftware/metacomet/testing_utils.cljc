@@ -18,15 +18,18 @@
 
 
 (defn like?
-  "Shortcut when only a few keys of the result are of interest.
+  "Shortcut when only a few keys of the result are of interest. Can swap in a comparator,
+  default is `=`. Will pass in `(comparator correct actual)`.
   (like? {:a 1 :b 2} {:b 2}) => true
   (like? {:a 1 :b 2} {:a 1}) => true
   (like? {} {}) => true
   (like? {:a 9} {:a 8}) => false"
-  [actual correct-sub-map]
-  (->> correct-sub-map
-    (every?
-      (fn [[key val]] (= (get actual key ::prevent-missing=nil) val)))))
+  ([actual correct-sub-map]
+   (like? actual correct-sub-map =))
+  ([actual correct-sub-map comparator]
+   (->> correct-sub-map
+     (every?
+       (fn [[key val]] (comparator val (get actual key ::prevent-missing=nil)))))))
 
 
 (s/def :distance-check/mode #{:abs :floor :ceil})
@@ -63,6 +66,15 @@
                   :ceil (and abs? (>= a b))
                   :floor (and abs? (<= a b)))))))
 
-(def ^:dynamic *default-distance-test-mode* (magnitude-distance 2 1))
+(def ^:dynamic *default-number-checker* (magnitude-distance 10 1))
 
-(defn like-numbers? [])
+
+(defmacro with-number-checker [ncheck & body]
+  `(binding [*default-number-checker* ~ncheck]
+    ~@body))
+
+(defn like-numbers?
+  ([actual correct-sub-map]
+   (like-numbers? actual correct-sub-map *default-number-checker*))
+  ([actual correct-sub-map number-checker]
+   (like? actual correct-sub-map number-checker)))

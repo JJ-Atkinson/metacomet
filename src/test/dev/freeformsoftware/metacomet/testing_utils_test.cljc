@@ -48,7 +48,7 @@
   (testing "abs mode"
     (let [fix1 (magnitude-distance 0 1)
           fix2 (magnitude-distance 1 1)
-          fix3 (magnitude-distance 2 3)]
+          fix3 (magnitude-distance 4 3)]
       (is (fix1 1 2))
       (is (not (fix1 1 2.2)))
       (is (fix2 1 0.9))
@@ -56,12 +56,21 @@
       (is (not (fix2 1 0.89)))
       (is (not (fix2 1 1.1)))
       (is (fix3 1000 1000.29))
-      (is (not (fix3 1000 1000.31)))
-      ))
+      (is (not (fix3 1000 1000.31)))))
   (testing "floor mode"
     (let [fix2 (magnitude-distance 1 1 {:mode :floor})]
       (is (not (fix2 1 0.9)))))
   (testing "ceil mode"
     (let [fix2 (magnitude-distance 1 1 {:mode :ceil})]
       (is (not (fix2 1 1.09))))))
+
+(deftest like-number-checker
+  (testing "magnitude-mode"
+    (with-number-checker (magnitude-distance 3 1)
+      (is (like-numbers?
+            {:a 100.0 :b 100.0}
+            {:a 100.1 :b 99.91}))
+      (is (not (like-numbers?
+                 {:a 100.0 :b 100.0}
+                 {:a 100.11 :b 99.90}))))))
 
