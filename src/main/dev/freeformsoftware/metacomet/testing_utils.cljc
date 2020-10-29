@@ -79,16 +79,37 @@
   ([actual correct-sub-map number-checker]
    (like? actual correct-sub-map number-checker)))
 
+(defn diff-numbers
+  "Variant of `like-numbers?` that returns all different elements in a map of
+   {key [correct actual]}"
+  ([actual correct-sub-map]
+   (diff-numbers actual correct-sub-map *default-number-checker*))
+  ([actual correct-sub-map number-checker]
+   (->> correct-sub-map 
+     (remove (fn [[key val]] (number-checker val (get actual key ::prevent-missing=nil))) )
+     keys
+     (into {} (map (fn [k] [k [(get correct-sub-map k) (get actual k)]]))))))
+
 (defn like-numbers-e
   "Variant of `like-numbers?` that throws with ex data containing the exact differences. 
    Useful to speed along debugging."
   ([actual correct-sub-map]
    (like-numbers-e actual correct-sub-map *default-number-checker*))
   ([actual correct-sub-map number-checker]
-   (as-> correct-sub-map $
-     (remove (fn [[key val]] (number-checker val (get actual key ::prevent-missing=nil))) $)
-     (if (not-empty $) 
-       (throw (ex-info "Does not match. {:key [correct actual]}"
-                (into {} (map (fn [k] [k [(get correct-sub-map k) (get actual k)]]))
-                  (keys $))))
+   (let [diff (diff-numbers actual correct-sub-map *default-number-checker*)]
+     (if (not-empty diff)
+       (throw (ex-info "Numbers are not alike. {key [correct actual]}"
+                diff))
+       true))))
+
+(defn like-numbers-p
+  "Variant of `like-numbers?` that throws with ex data containing the exact differences. 
+   Useful to speed along debugging."
+  ([actual correct-sub-map]
+   (like-numbers-e actual correct-sub-map *default-number-checker*))
+  ([actual correct-sub-map number-checker]
+   (let [diff (diff-numbers actual correct-sub-map *default-number-checker*)]
+     (if (not-empty diff)
+       (do (print diff)
+           false)
        true))))
