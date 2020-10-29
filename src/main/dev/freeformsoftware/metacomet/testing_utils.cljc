@@ -71,10 +71,24 @@
 
 (defmacro with-number-checker [ncheck & body]
   `(binding [*default-number-checker* ~ncheck]
-    ~@body))
+     ~@body))
 
 (defn like-numbers?
   ([actual correct-sub-map]
    (like-numbers? actual correct-sub-map *default-number-checker*))
   ([actual correct-sub-map number-checker]
    (like? actual correct-sub-map number-checker)))
+
+(defn like-numbers-e
+  "Variant of `like-numbers?` that throws with ex data containing the exact differences. 
+   Useful to speed along debugging."
+  ([actual correct-sub-map]
+   (like-numbers-e actual correct-sub-map *default-number-checker*))
+  ([actual correct-sub-map number-checker]
+   (as-> correct-sub-map $
+     (remove (fn [[key val]] (number-checker val (get actual key ::prevent-missing=nil))) $)
+     (if (not-empty $) 
+       (throw (ex-info "Does not match. {:key [correct actual]}"
+                (into {} (map (fn [k] [k [(get correct-sub-map k) (get actual k)]]))
+                  (keys $))))
+       true))))

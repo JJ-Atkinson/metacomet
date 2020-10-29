@@ -74,5 +74,13 @@
             {:a 100.1 :b 99.91}))
       (is (not (like-numbers?
                  {:a 100.0 :b 100.0}
-                 {:a 100.11 :b 99.90}))))))
+                 {:a 100.11 :b 99.90})))))
+  (testing "throws? option"
+    (with-number-checker (magnitude-distance 3 1)
+      (is (like-numbers-e
+            {:a 100.0 :b 100.0}
+            {:a 100.1 :b 99.91}))
+      (is (thrown? Exception (like-numbers-e
+                               {:a 100.0 :b 100.0}
+                               {:a 100.11 :b 100.0}))))))
 
