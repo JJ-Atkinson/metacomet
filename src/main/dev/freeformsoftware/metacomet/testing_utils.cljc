@@ -106,7 +106,7 @@
   "Variant of `like-numbers?` that throws with ex data containing the exact differences. 
    Useful to speed along debugging."
   ([actual correct-sub-map]
-   (like-numbers-e actual correct-sub-map *default-number-checker*))
+   (like-numbers-p actual correct-sub-map *default-number-checker*))
   ([actual correct-sub-map number-checker]
    (let [diff (diff-numbers actual correct-sub-map *default-number-checker*)]
      (if (not-empty diff)
