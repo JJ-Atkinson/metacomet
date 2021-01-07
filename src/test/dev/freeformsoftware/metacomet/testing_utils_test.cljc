@@ -23,6 +23,19 @@
   (testing "Missing keys work correctly"
     (is (not (like? {} {:a nil})))))
 
+(deftest like-recursive-test
+  (testing "Recursively tests on maps"
+    (is (like-recursive? {:a {:b 1 :c 3}} {:a {:b 1}}))
+    (is (like-recursive? {:a {:b 1 :c 3}} {:a {:b 1 :c 3}}))
+    (is (not (like-recursive? {:a {:b 1 :c 3}} {:a {:b 1 :c 3 :not-here 4}}))))
+  (testing "Treats vec as associative"
+    (is (like-recursive? 
+          {:a [{:b 1 :c 3} {:b 5}]}
+          {:a [{:b 1} {:b 5}]}))
+    (is (not (like-recursive?
+               {:a [{:b 1 :c 3} {:b 5}]}
+               {:a [{:b 1} {:b 3}]})))))
+
 
 (deftest absolute-distance-test
   (testing "abs mode"

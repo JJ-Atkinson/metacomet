@@ -1,6 +1,7 @@
 (ns dev.freeformsoftware.metacomet.testing-utils
   (:require [com.fulcrologic.guardrails.core :refer [>defn => |]]
             [clojure.spec.alpha :as s]
+            [clojure.data :as data]
             [dev.freeformsoftware.metacomet.prim.number-fns :as nf]))
 
 (defn counting
@@ -30,6 +31,11 @@
    (->> correct-sub-map
      (every?
        (fn [[key val]] (comparator val (get actual key ::prevent-missing=nil)))))))
+
+(defn like-recursive? 
+  "Same as (-> (diff actual correct-sub-map) second empty?)"
+  [actual correct-sub-map]
+  (-> (clojure.data/diff actual correct-sub-map) second empty?))
 
 
 (s/def :distance-check/mode #{:abs :floor :ceil})
@@ -77,7 +83,9 @@
   ([actual correct-sub-map]
    (like-numbers? actual correct-sub-map *default-number-checker*))
   ([actual correct-sub-map number-checker]
-   (like? actual correct-sub-map number-checker)))
+   (like? actual correct-sub-map (fn [a b]
+                                   (assert (and (number? a) (number? b)))
+                                   (number-checker a b)))))
 
 (defn diff-numbers
   "Variant of `like-numbers?` that returns all different elements in a map of
@@ -85,8 +93,8 @@
   ([actual correct-sub-map]
    (diff-numbers actual correct-sub-map *default-number-checker*))
   ([actual correct-sub-map number-checker]
-   (->> correct-sub-map 
-     (remove (fn [[key val]] (number-checker val (get actual key ::prevent-missing=nil))) )
+   (->> correct-sub-map
+     (remove (fn [[key val]] (number-checker val (get actual key ::prevent-missing=nil))))
      keys
      (into {} (map (fn [k] [k [(get correct-sub-map k) (get actual k)]]))))))
 
