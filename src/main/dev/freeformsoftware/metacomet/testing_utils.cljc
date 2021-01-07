@@ -1,6 +1,7 @@
 (ns dev.freeformsoftware.metacomet.testing-utils
   (:require [com.fulcrologic.guardrails.core :refer [>defn => |]]
             [clojure.spec.alpha :as s]
+            [dev.freeformsoftware.metacomet.prim.seq-utils :as mc.su]
             [clojure.data :as data]
             [dev.freeformsoftware.metacomet.prim.number-fns :as nf]))
 
@@ -33,9 +34,26 @@
        (fn [[key val]] (comparator val (get actual key ::prevent-missing=nil)))))))
 
 (defn like-recursive? 
-  "Same as (-> (diff actual correct-sub-map) second empty?)"
+  "Similar to (-> (diff actual correct-sub-map) second empty?)"
   [actual correct-sub-map]
-  (-> (clojure.data/diff actual correct-sub-map) second empty?))
+  (->>
+    (clojure.data/diff actual correct-sub-map)
+    second
+    (mc.su/postwalk-till= (fn [thing]
+                            (cond
+                              (and (or (vector? thing)
+                                     (list? thing))
+                                (seq thing)
+                                (every? nil? thing))
+                              nil
+                              
+                              (and (map? thing) 
+                                (seq thing)
+                                (every? (comp nil? second) thing))
+                              nil
+                              
+                              :default thing)))
+    empty?))
 
 
 (s/def :distance-check/mode #{:abs :floor :ceil})

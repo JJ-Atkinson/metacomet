@@ -34,7 +34,15 @@
           {:a [{:b 1} {:b 5}]}))
     (is (not (like-recursive?
                {:a [{:b 1 :c 3} {:b 5}]}
-               {:a [{:b 1} {:b 3}]})))))
+               {:a [{:b 1} {:b 3}]}))))
+  (comment 
+    (clojure.data/diff {:a [:c {:has :stuff}]} {:a [:c {}]})
+    (clojure.data/diff {:a [:c {:has :stuff}]} {:a [:c {} []]})
+    (clojure.data/diff {:a [:c {:has :stuff}]} {:a [:c {} '()]}))
+  (testing "Properly avoids [nil nil [nil]] type pattern that comes from diff"
+    (is (like-recursive? {:a [:c {:has :stuff}]} {:a [:c {}]}))
+    (is (not (like-recursive? {:a [:c {:has :stuff}]} {:a [:c {} []]})))
+    (is (not (like-recursive? {:a [:c {:has :stuff}]} {:a [:c {} '()]})))))
 
 
 (deftest absolute-distance-test
