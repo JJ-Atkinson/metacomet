@@ -2,8 +2,8 @@
   (:require [com.fulcrologic.guardrails.core :refer [>defn =>]]
             [clojure.spec.alpha :as s]))
 
-(>defn update-nn 
-  "Update if not nil. Useful if you don't want to add keys that weren't 
+(>defn update-nx
+  "Update if the key exists. Useful if you don't want to add keys that weren't 
   already present."
   [map key f & args]
   [(s/nilable map?) any? ifn? (s/* any?) => (s/nilable map?)]
